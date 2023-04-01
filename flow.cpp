@@ -96,40 +96,56 @@ public:
 };
 
 int main() {
-  int n, m, a, b;
-  cin >> n >> m >> a >> b;
-  vector<vector<int> > grid(n, vector<int>(m));
-  
-  max_flow mf(n*m+2);
-  int s = n*m, t = n*m+1;
-
-  for (int i = 0; i < n; ++i) {
-    string s; cin >> s;
-    for (int j = 0; j < m; ++j) {
-      grid[i][j] = s[j];
+  int tc; cin >> tc;
+  while (tc--) {
+    int n, source, g, s, m, r;
+    cin >> n;
+    cin >> source >> g >> s;
+    cerr << "s: " << s << endl;
+    int sink = n;
+    unordered_map<int, vector<array<int, 3> > > adj(n);
+    cin >> m;
+    max_flow mf(n+1);
+    int tmp;
+    for (int i = 0; i < m; ++i) {
+      cin >> tmp;
+      mf.add_edge(tmp, sink, INF);
     }
-  }
-
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < m; ++j) {
-      if (grid[i][j] == '.') {
-        mf.add_edge(s, m*i+j, b);
-      } else {
-        mf.add_edge(m*i+j, t, b);
-      }
-      if (i+1<n) {
-        mf.add_edge(m*i+j, m*(i+1)+j, a);
-        mf.add_edge(m*(i+1)+j, m*i+j, a);
-      }
-      if (j+1<m) {
-        mf.add_edge(m*i+j, m*i+j+1, a);
-        mf.add_edge(m*i+j+1, m*i+j, a);
-      }
+    cin >> r;
+    int a, b, p, t;
+    for (int i = 0; i < r; ++i) {
+      cin >> a >> b >> p >> t;
+      adj[a].push_back({b, p, t});
     }
-  }
 
-  // printf("%lld\n", mf.edmonds_karp(s, t));
-  printf("%lld\n", mf.dinic(s, t));
+    set<int> graph({source});
+    vector<int> buffer;
+
+    ll ans = 0;
+    ll run = 0;
+    for (int i = 1; i <= s; ++i) {
+      for (auto& v : graph) {
+        for (auto& u : adj[v]) {
+          --u[2];
+          if (u[2] == 0) {
+            mf.add_edge(v, u[0], u[1]);
+            buffer.push_back(u[0]);
+            cerr << "added edge: " << v << "-" << u[0] << endl;
+          }
+        }
+      }
+      for (auto& u : buffer) {
+        graph.insert(u);
+      }
+      buffer.clear();
+
+      run += mf.dinic(source, sink);
+      ans += run;
+      cerr << "i: " << i << " ans: " << ans << endl;
+    }
+
+    printf("%lld\n", min((ll)g, ans));
+  }
 
   return 0;
 }
