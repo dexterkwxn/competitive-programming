@@ -119,7 +119,7 @@ public:
   }
 };
 
-const int MAX_N = 800000;                        // can go up to 450K chars
+const int MAX_N = 450100;                        // can go up to 450K chars
 
 char T[MAX_N];
 char P[MAX_N];
@@ -127,149 +127,22 @@ char LRS_ans[MAX_N];
 char LCS_ans[MAX_N];
 
 int main() {
-	vector<string> end{"!", "#", "$", "%", "&", "(", ")", "*", "+", "-"};
-
-	int tc; cin >> tc;
-	while (tc--) {
-		int n; cin >> n;
-		vector<string> s(n);
-    vector<int> split_idx(n);
-		string t = "";
-		rep(i,0,n) {
-			cin >> s[i];
-			t += s[i];
-			t += end[i];
-		}
-		rep(i,0,t.size()) {
-			T[i] = t[i];
-		}
-
-		int sz = t.size();
-		SuffixArray S(T, sz);
-
-    int cur = sz-1;
-    for(int i = n-1; i >= 0; --i) {
-      split_idx[i] = cur;
-      cur -= s[i].size()+1;
+  string s;
+  while(getline(cin, s)) {
+    int n; cin >> n;
+    int sz = s.size();
+    rep(i,0,sz) {
+      T[i] = s[i];
     }
+    T[sz++] = 0;
+    SuffixArray S(T, sz);
 
-    vector<int> count(n), distinct(n);
-
-    int lo = 0, hi = S.SA.size();
-    int l = n, r = n;
-    int ans = 0;
-    while (r < hi) {
-      // cerr << "p1" << nl;
-      while(true) {
-        // which string
-        int idx;
-        rep(i,0,n) {
-          if (S.SA[r] < split_idx[i]) {
-            idx = i;
-            break;
-          }
-        }
-        // cerr << "l, r, idx: " << l << " " << r << " " << idx << nl;
-        ++count[idx];
-        if (count[idx] == 1) distinct[idx] = 1;
-
-        // check if all satisfied
-        bool out = true;
-        rep(i,0,n) {
-          if (distinct[i] == 0) {
-            out = false;
-            break;
-          }
-        }
-        ++r;
-        if (out || r == S.SA.size()) break;
-      }
-      // cerr << "p2" << nl;
-      while(true) {
-        if (l == r-1) break;
-        int idx;
-        rep(i,0,n) {
-          if (S.SA[l] < split_idx[i]) {
-            idx = i;
-            break;
-          }
-        }
-        // cerr << "l, r, idx: " << l << " " << r << " " << idx << nl;
-        if (count[idx] == 1) {
-          // check if others all gucci
-          bool out = false;
-          rep(i,0,n) {
-            if (distinct[i] == 0) {
-              out = true;
-              break;
-            }
-          }
-          if (!out) {
-            int best = INT_MAX;
-            rep(i,l+1,r) {
-              best = min(best, S.LCP[i]);
-            }
-            /*
-            if (best > ans) {
-             cerr << "l, r, idx: " << l << " " << r << " " << idx << nl;
-             cerr << "best found - " << best << nl;
-            }
-            */
-            ans = max(ans, best);
-          }
-          --count[idx];
-          distinct[idx] = 0;
-          ++l;
-          break;
-        } else {
-          --count[idx];
-          ++l;
-        }
-        
-      }
-       // cerr << "done" << nl;
+    int q;
+    rep(i,0,n) {
+      cin >> q;
+      cout << S.SA[q+1] << " ";
     }
-    /*
-       printf(" i SA[i] LCP[i]   Suffix SA[i]\n");
-       for (int i = 0; i < sz; ++i)
-          printf("%2d    %2d    %2d    %s\n", i, S.SA[i], S.LCP[i], T+S.SA[i]);
-          */
-    cout << ans << nl;
-	}
-
-/*
-  freopen("sa_lcp_in.txt", "r", stdin);
-  scanf("%s", &T);                               // read T
-  int n = (int)strlen(T);                        // count n
-  T[n++] = '$';                                  // add terminating symbol
-  SuffixArray S(T, n);                           // construct SA+LCP
-
-  printf("T = '%s'\n", T);
-  printf(" i SA[i] LCP[i]   Suffix SA[i]\n");
-  for (int i = 0; i < n; ++i)
-    printf("%2d    %2d    %2d    %s\n", i, S.SA[i], S.LCP[i], T+S.SA[i]);
-
-
-  // LCS demo, find the LCS of (T, P)
-  strcpy(P, "CATA");
-  int m = (int)strlen(P);
-  strcat(T, P);                                  // append P to T
-  strcat(T, "#");                                // add '#' at the back
-  n = (int)strlen(T);                            // update n
-
-  // reconstruct SA of the combined strings
-  SuffixArray S2(T, n);                          // reconstruct SA+LCP
-  int split_idx = n-m-1;
-  printf("T+P = '%s'\n", T);
-  printf(" i SA[i] LCP[i] From  Suffix SA[i]\n");
-  for (int i = 0; i < n; ++i)
-    printf("%2d    %2d    %2d    %2d    %s\n", 
-      i, S2.SA[i], S2.LCP[i], S2.SA[i] < split_idx ? 1 : 2, T+S2.SA[i]);
-
-  auto [LCS_len, LCS_idx] = S2.LCS(split_idx);
-  strncpy(LCS_ans, T+S2.SA[LCS_idx], LCS_len);
-  printf("The LCS is '%s' with length = %d\n", LCS_ans, LCS_len);
-  
-*/
-  return 0;
+    cout << nl;
+    getline(cin, s);
+  }
 }
