@@ -2,26 +2,30 @@
 
 using namespace std;
 
-#define rep(i,a,b) for(int i=a;i<b;++i)
+#define rep(i, a, b) for (int i = a; i < b; ++i)
+#define nl "\n"
 
 int main() {
-  int tc; cin >> tc;
-  while (tc--) {
-    int l, r; cin >> l >> r;
+    int tc;
+    cin >> tc;
 
-    int best = 0;
-    int num = l;
-    string s;
-    rep(i,l,min(l+100,r+1)) {
-      s = to_string(i);
-      sort(s.begin(), s.end());
-      if ((s[s.size()-1] - '0') - (s[0] - '0') > best) {
-        best = (s[s.size()-1] - '0') - (s[0] - '0');
-        num = i;
-      }
+    while (tc--) {
+        int n, t;
+        cin >> n >> t;
+        vector<int> d(n), e(n);
+        rep(i, 0, n) { cin >> d[i]; }
+        rep(i, 0, n) { cin >> e[i]; }
+
+        int run = -1;
+        int best = -1;
+        rep(i, 0, n) {
+            if (d[i] + i <= t) {
+                if (e[i] > best) {
+                    run = i + 1;
+                    best = e[i];
+                }
+            }
+        }
+        cout << run << nl;
     }
-
-    cout << num << '\n';
-
-  }
 }

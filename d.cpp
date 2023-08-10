@@ -2,25 +2,26 @@
 
 using namespace std;
 
-#define rep(i,a,b) for(int i=a;i<b;++i)
+#define rep(i, a, b) for (int i = a; i < b; ++i)
+#define nl "\n"
+typedef long long ll;
 
 int main() {
-  int n, k; cin >> n >> k;
-  vector<int> v;
-  v.assign(n, 0);
-  rep(i, 0, n) {
-    cin >> v[i];
-  }
-
-  int cnt;
-    cnt = 0;
-  rep(i, 0, n-k+1) {
-    rep(j, 0, k/2) {
-      cerr << v[i+j] << " " << v[i+k-1-j] << endl;
-      if (v[i+j] != v[i+k-1-j]) ++cnt;
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n;
+        cin >> n;
+        vector<int> v(n);
+        unordered_map<int, int> a, b;
+        rep(i, 0, n) { cin >> v[i]; }
+        int ans = 0;
+        rep(i, 0, n - 1) {
+            int d = v[i + 1] % v[i];
+            if (v[i + 1] % v[i])
+                continue;
+            a[d]++;
+        }
+        cout << ans << nl;
     }
-    cerr << "-----------" << endl;
-    
-  }
-  cout << cnt;
 }

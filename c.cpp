@@ -2,46 +2,50 @@
 
 using namespace std;
 
-#define rep(i,a,b) for(int i=a;i<b;++i)
+#define rep(i, a, b) for (int i = a; i < b; ++i)
+#define nl "\n"
 typedef long long ll;
 
 int main() {
-  int tc; cin >> tc;
-  while (tc--) {
-    ll l, r; cin >> l >> r;
-    ll num = l;
-    string s = to_string(l);
-    unordered_map<int, set<int>> ump;
+    int m, s;
+    cin >> m >> s;
+    if (s == 0) {
+        cout << "-1 -1";
+        return 0;
+    }  
+    vector<int> l(m), h(m);
 
-    rep(i, 0, s.size()) {
-      ump[s[i]-'0'].insert(i);
+    l[0] = 1;
+    int ns = s-1;
+    for (int i = m-1; i >= 0; --i) {
+        if (ns == 0) break;
+        while (l[i] < 9) {
+            ++l[i];
+            --ns;
+            if (ns == 0) break;
+        }
     }
 
-    string cp = s;
-    sort(cp.begin(), cp.end());
-    while (true) {
-      while (true) {
-        int digit = cp[0] - '0';
-        int pos = *ump[digit].rbegin();
-        s[pos]++;
-        if (stoi(s) > r) break;
-        rep(j, 0, s.size()-1) {
-          if (cp[j] > cp[j+1]) swap(cp[j], cp[j+1]);
+    h[0] = 1;
+    ns = s-1;
+    rep(i,0,m) {
+        if (ns == 0) break;
+        while (h[i] < 9) {
+            ++h[i];
+            --ns;
+            if (ns == 0) break;
         }
-      }
-      while (true) {
-        int digit = cp[cp.size()-1] - '0';
-        int pos = *ump[digit].rbegin();
-        s[pos]--;
-        if (stoi(s) < l) break;
-        for (int j = s.size()-1; j > 0; --j) {
-          if (cp[j] > cp[j-1]) swap(cp[j], cp[j-1]);
-        }
-      }
-      break;
     }
 
-    cout << stoi(s) << '\n';
+    if (ns != 0) {
+        cout << "-1 -1";
+        return 0;
+    }  
 
-  }
+    string r = "", t = "";
+    rep(i,0,m) {
+        r += to_string(l[i]);
+        t += to_string(h[i]);
+    }
+    cout << r << " " << t;
 }
